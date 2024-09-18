@@ -1,4 +1,4 @@
-name: Build and deploy ASP app to Azure Web App - app-kentico-devcms-test-caea
+name: Build and deploy static HTML to Azure Web App
 
 on:
   push:
@@ -13,26 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.x' # Use the appropriate version
+      # Skip unnecessary NuGet/MSBuild steps since it's a static HTML project
 
-      - name: Install NuGet
+      - name: Publish HTML files to folder
         run: |
-          nuget install NuGet.CommandLine -OutputDirectory .nuget
-          $env:PATH += ";$(pwd)/.nuget/NuGet.CommandLine.X.XX.X/tools"
-
-      - name: Restore NuGet packages
-        run: nuget restore
-
-      - name: Publish to folder
-        run: msbuild /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutDir="published"
+          mkdir published
+          cp -r ./simpleHTML/* ./published/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: ASP-app
+          name: HTML-app
           path: 'published/**'
 
   deploy:
@@ -46,13 +37,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: ASP-app
+          name: HTML-app
           path: ./published
       
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'app-kentico-devcms-test-caea'
+          app-name: 'your-azure-app-service-name'
           package: './published'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3D94DE49D512409E9663CB70E1998658 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
