@@ -16,9 +16,10 @@ jobs:
       - name: Create publish folder
         run: mkdir published
 
-      # Corrected path to copy files
+      # Exclude the 'published' folder during the copy process
       - name: Copy HTML files to publish folder
-        run: Copy-Item -Path './*' -Destination './published' -Recurse
+        run: |
+          Get-ChildItem -Path . -Exclude 'published' | Copy-Item -Destination './published' -Recurse
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
