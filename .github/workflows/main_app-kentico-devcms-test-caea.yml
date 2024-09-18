@@ -13,11 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Update the MSBuild action to a more recent version or an alternative
       - name: Setup MSBuild path
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1.3 # Updated to use a supported Node.js 20 version
 
+      # Update the NuGet action to a supported version
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
+        uses: NuGet/setup-nuget@v3 # Updated to use a supported Node.js 20 version
 
       - name: Restore NuGet packages
         run: nuget restore
