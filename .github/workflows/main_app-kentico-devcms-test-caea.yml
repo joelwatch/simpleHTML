@@ -13,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Skip unnecessary NuGet/MSBuild steps since it's a static HTML project
+      - name: Create publish folder
+        run: mkdir published
 
-      - name: Publish HTML files to folder
-        run: |
-          mkdir published
-          cp -r ./simpleHTML/* ./published/
+      # Corrected path to copy files
+      - name: Copy HTML files to publish folder
+        run: Copy-Item -Path './*' -Destination './published' -Recurse
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -44,6 +44,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'app-kentico-devcms-test-caea'
+          app-name: 'your-azure-app-service-name'
           package: './published'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
